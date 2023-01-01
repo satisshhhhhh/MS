@@ -1,0 +1,89 @@
+# SVD
+
+import numpy as np
+from sklearn.datasets import load_digits
+from matplotlib import pyplot as plt
+from sklearn.decomposition import TruncatedSVD
+float_formatter = lambda x: "%.2f" % x
+np.set_printoptions(formatter={'float_kind':float_formatter})
+from sklearn.ensemble import RandomForestClassifier
+
+X, y = load_digits(return_X_y=True)
+X.shape
+X
+y
+image = X[0]
+
+image = image.reshape((8, 8))
+plt.matshow(image, cmap = 'gray')
+
+''' 
+Next, we’ll use Singular Value Decomposition to see whether we are able to reconstruct the image using only 2 features for each row.
+
+The s matrix returned by the function must be converted into a diagonal matrix using the diag method. By default, diag will create a matrix that is n x n, relative to the original matrix.
+This causes a problem as the size of the matrices no longer follow the rule of matrix multiplication where the number of columns in a matrix must match the number of rows in the other matrix.
+Therefore, we create a new m x n matrix and populate the first n x n part of it with the diagonal matrix.
+'''
+
+image.shape
+
+U, s, V = np.linalg.svd(image)
+# Creating a Zero matrix of size same as of Image i.e (8x8)
+S = np.zeros((image.shape[0], image.shape[1]))
+S[:image.shape[0], :image.shape[0]] = np.diag(s)
+n_component = 2
+S = S[:, :n_component]
+VT = V[:n_component, :]
+A = U.dot(S.dot(VT))
+print(A)
+
+plt.matshow(A, cmap = 'gray')
+
+
+# We can get the reduced feature space by taking the dot product of the U and S matrices
+
+U.dot(S)
+
+''' Original vs Reduced Feature Space
+Let’s compare the accuracy of a Random Forest model when it’s trained using the original handwritten digits and when it’s trained using the reduced feature space obtained from Singular Value Decomposition.
+
+We can gauge the accuracy of the model by taking a look at the Out-Of-Bag score. If you’re unfamiliar with the concept of OOB, I encourage you checkout this post on Random Forest. '''
+
+rf_original = RandomForestClassifier(oob_score=True)
+rf_original.fit(X, y)
+rf_original.oob_score_
+
+svd = TruncatedSVD(n_components=2)
+X_reduced = svd.fit_transform(X)
+
+X_reduced[0]
+
+
+# Taking a look at the image, it’s difficult to distinguish what digit the image consists of, it could very well be a 5 and not a 0.
+
+image_reduced = svd.inverse_transform(X_reduced[0].reshape(1,-1))
+image_reduced = image_reduced.reshape((8,8))
+plt.matshow(image_reduced, cmap = 'gray')
+
+# After training a Random Forest Classifier on the reduced dataset, we obtain a meager accuracy of 36.7%
+
+rf_reduced = RandomForestClassifier(oob_score=True)
+rf_reduced.fit(X_reduced, y)
+rf_reduced.oob_score_
+
+# We can get the total variance explained by taking the sum of the explained_variance_ratio_ property. We generally want to aim for 80 to 90 percent.
+
+svd.explained_variance_ratio_.sum()
+
+# Let’s try again, only, this time, we use 16 components. We check to see the amount of information contained in the 16 features.
+
+svd = TruncatedSVD(n_components=16)
+X_reduced = svd.fit_transform(X)
+svd.explained_variance_ratio_.sum()
+
+# We obtain an accuracy comparable to the model trained using the original images and we used 16/64=0.25 the amount of data.
+
+rf_reduced = RandomForestClassifier(oob_score=True)
+rf_reduced.fit(X_reduced, y)
+rf_reduced.oob_score_
+

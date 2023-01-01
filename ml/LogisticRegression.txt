@@ -1,0 +1,93 @@
+# Logistic Regression
+
+import pandas as pd
+# col_names = ['preg', 'glucose', 'bp', 'skin', 'insulin', 'bmi', 'pedigree', 'age', 'label']
+
+heart = pd.read_csv("Heart.csv")
+heart.head()
+
+# Import label encoder
+from sklearn import preprocessing
+  
+# label_encoder object knows how to understand word labels.
+label_encoder = preprocessing.LabelEncoder()
+  
+# Encode labels in column 'species'.
+heart['AHD']= label_encoder.fit_transform(heart['AHD'])
+heart['ChestPain']= label_encoder.fit_transform(heart['ChestPain'])
+heart['Thal']= label_encoder.fit_transform(heart['Thal'])
+
+heart.head()
+
+feature_cols = ['Age','Sex', 'ChestPain', 'RestBP','Chol','Fbs','RestECG', 'MaxHR', 'ExAng', 'Oldpeak', 'Slope', 'Ca', 'Thal']
+x = heart[feature_cols]
+y = heart.AHD
+print(x)
+
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
+
+
+from sklearn.linear_model import LogisticRegression
+
+logreg = LogisticRegression()
+
+logreg.fit(x_train, y_train)
+
+y_pred=logreg.predict(x_test)
+print("Predicted Test Results :", y_pred)
+print("-"*20)
+
+
+from sklearn import metrics
+cnf_matrix = metrics.confusion_matrix(y_test, y_pred)
+cnf_matrix
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline 
+#called as magic function we can use matplot lib in any line now
+
+class_names= ['Diabetese', 'No-diabetese']
+fig, ax = plt.subplots()
+tick_marks = np.arange(len(class_names))
+plt.xticks(tick_marks, class_names)
+plt.yticks(tick_marks, class_names)
+
+#create heatmap
+sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu", fmt='g')
+ax.xaxis.set_label_position("top")
+plt.tight_layout()
+plt.title('Confusion Matrix', y=1.1)
+plt.ylabel('Actual label')
+plt.xlabel('Predicted label')
+
+print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
+# print("Precision: ", metrics.precision_score(y_test, y_pred))
+# print("Recall: ", metrics.recall_score(y_test, y_pred))
+
+#ROC - Receiver Operating Characteristic curve is a plot of the true
+# positive rate againt the false positive rate.
+# It shows the tradeoff between sensitivity and specificity
+
+# AUC score for our case is 0.86
+# AUC score of 1 represents perfect classifier
+# and of 0.5 represents a worthless classifier
+
+from turtle import color
+
+
+y_pred_proba = logreg.predict_proba(x_test)[::,1]
+fpr, tpr, _ = metrics.roc_curve(y_test, y_pred_proba)
+auc = metrics.roc_auc_score(y_test, y_pred_proba)
+plt.plot(fpr,tpr, label ="data 1, auc="+str(auc),color="black")
+plt.legend(loc=4)
+plt.show()
+
+
+
+
+
+
+

@@ -1,0 +1,130 @@
+# PCA 
+
+#Importing Libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
+from matplotlib.colors import ListedColormap
+
+dataset = pd.read_csv('wine.csv')
+  
+# distributing the dataset into two components X and Y
+X = dataset.iloc[:, 0:10].values
+y = dataset.iloc[:, 11].values
+
+# displaying X and y
+print("X")
+print(X)
+print("y")
+print(y)
+
+# Checking if our dataset has any null values
+dataset.isnull().values.any()
+
+# If our dataset has null values 
+
+# counting null value count of each column
+dataset.isnull().sum()
+
+# counting null value count of total dataset
+dataset.isnull().sum().sum()
+
+# Splitting the X and Y into the
+# Training set and Testing set
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+
+
+# performing preprocessing part
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+
+#Fitting Decision Tree classifier to the training set  
+from sklearn.tree import DecisionTreeClassifier  
+classifier= DecisionTreeClassifier(criterion='entropy', random_state=0)  
+classifier.fit(X_train, y_train) 
+
+
+# Predicting the test set result using
+# predict function under Decision Tree
+y_pred = classifier.predict(X_test)
+print("accuracy score:", accuracy_score(y_test,y_pred))
+
+
+# Reducing Feature Columns from 11 to 2 and checking the accuracy
+
+# Applying PCA function on training
+# and testing set of X component
+from sklearn.decomposition import PCA
+
+# Reducing feature columns numbers from 11 to 2
+pca = PCA(n_components = 2) #no of variables
+
+X_train_2 = pca.fit_transform(X_train)
+X_test_2 = pca.transform(X_test)
+
+explained_variance = pca.explained_variance_ratio_
+print("Explained Variance")
+print(explained_variance)
+
+
+#Fitting Decision Tree classifier to the training set  
+from sklearn.tree import DecisionTreeClassifier  
+classifier= DecisionTreeClassifier(criterion='entropy', random_state=0)  
+classifier.fit(X_train_2, y_train) 
+
+# Predicting the test set result using
+# predict function under Decision Tree
+y_pred_2 = classifier.predict(X_test_2)
+print("accuracy score:", accuracy_score(y_test,y_pred_2))
+
+# making confusion matrix between
+# test set of Y and predicted value.
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(y_test, y_pred_2)
+print("Confusion Matrix")
+print(cm)
+
+
+'''
+So as we can see our model isn't working good enough when we reduce our feature columns to 2 from 11
+Now let's try to reduce feature columns from 11 to 5
+'''
+# Applying PCA function on training
+# and testing set of X component
+from sklearn.decomposition import PCA
+
+# Reducing feature columns numbers from 11 to 5
+pca = PCA(n_components = 5) #no of variables
+
+X_train_5 = pca.fit_transform(X_train)
+X_test_5 = pca.transform(X_test)
+
+explained_variance = pca.explained_variance_ratio_
+print("Explained Variance")
+print(explained_variance)
+
+#Fitting Decision Tree classifier to the training set  
+from sklearn.tree import DecisionTreeClassifier  
+classifier= DecisionTreeClassifier(criterion='entropy', random_state=0)  
+classifier.fit(X_train_5, y_train) 
+
+# Predicting the test set result using
+# predict function under Decision Tree
+y_pred_5 = classifier.predict(X_test_5)
+print("accuracy score:", accuracy_score(y_test,y_pred_5))
+
+# making confusion matrix between
+# test set of Y and predicted value.
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(y_test, y_pred_5)
+print("Confusion Matrix")
+print(cm)

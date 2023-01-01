@@ -1,0 +1,161 @@
+Regression Analysis
+
+# Import Libraries
+import matplotlib.pyplot as plt
+from scipy import stats
+
+x = [5,20,10,6,70,50,30,50,40,60,5,20,10,6,70,50,30,50,40,60]
+y = [50,40,60,30,50,20,70,5,10,20,50,40,60,30,50,20,70,5,10,20]
+
+plt.scatter(x,y)
+plt.show()
+
+
+# To get slope, intercept, rvalue, pvalue, stderr, intercept_stderr
+slope, intercept, rvalue, pvalue, stderr= stats.linregress(x,y)
+stats.linregress(x,y)
+
+
+def myfun(x):
+    return slope*x + intercept
+mymodel = list(map(myfun, x))
+plt.scatter(x,y)
+plt.plot(x, mymodel)
+plt.show()
+
+# To predict
+test = myfun(20)
+print(test)
+
+
+
+
+
+# importing Libraries
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# reading a csv file and creating a csv
+df = pd.read_csv('Salary_Data.csv', usecols = ['YearsExperience', 'Salary'])
+
+df # printing dataframe
+
+
+# Storing values of years of experience and salary into var x and y
+x = df['YearsExperience']
+y = df['Salary']
+print(x)
+print(y)
+
+
+# Define function to find linear regression line
+def linear_regression(x,y):
+    N = len(x)
+    x_mean = x.mean()
+    y_mean = y.mean()
+
+    # for finding slope (B1)
+    B1_num = ((x - x_mean)*(y - y_mean)).sum()
+    B1_den = ((x - x_mean)**2).sum()
+    B1 = B1_num/B1_den
+
+    # for finding y intercept using slope and mean values of y and x
+    B0 = y_mean - (B1*x_mean)
+
+    reg_line = 'y = {} + {}beta'.format(B0, round(B1, 3))
+
+    return (B0, B1, reg_line)
+
+
+
+# Define function to find R error and R square error
+def corr_coeff(x,y):
+    N = len(x)
+
+    num = (N*(x*y).sum())-(x.sum()*y.sum())
+    den = np.sqrt((N*(x**2).sum()-x.sum()**2)*(N*(y**2).sum()-y.sum()**2))
+    R = num/ den
+    return R
+
+
+# Getting the value of beta 0 and beta 1 and regression line by giving parameters of x and y to our previously created fun of linear regression
+B0, B1, reg_line = linear_regression(x,y)
+print('regression line: ', reg_line)
+
+
+# finding correlation coefficient
+R = corr_coeff(x,y)
+print('Correlation Coef: ',R)
+print('Godness of Fit: ', R**2)
+
+
+# Plotting Scatter Plot with the given data to find the best fit
+
+plt.figure(figsize=(12,5))
+plt.scatter(x,y, s=300, linewidths=1, edgecolor='Blue')
+
+plt.title('How Experience Affects Salary')
+plt.xlabel('Years of Experience', fontsize=15)
+plt.ylabel('Salary', fontsize=15)
+plt.plot(x, B0+B1*x, c='r', linewidth=5, alpha=0.5, solid_capstyle='round')
+plt.scatter(x=x.mean(), y=y.mean(), marker='*', s=10**2.5, c='r')
+
+# Plotting Bar Graph of year of experience against salaries
+plt.figure(figsize=(12,5))
+plt.bar(x,y, width=0.3, color='orange')
+
+plt.title('How Experience Affects Salary')
+plt.xlabel('Years of Experience', fontsize=15)
+plt.ylabel('Salary', fontsize=15)
+
+
+
+
+''' Performing REgression Analysis on Vehivles Dataset '''
+
+# Reading csv file
+car = pd.read_csv('car data.csv')
+car
+
+# Storing value of year and selling price
+sp = car['Selling_Price']
+yr = car['Year']
+
+print(sp)
+print(yr)
+
+
+# finding linear regression line values
+B0, B1, reg_line = linear_regression(yr, sp)
+print('regression line: ', reg_line)
+
+
+# finding correlation coefficient
+R = corr_coeff(x,y)
+print('Correlation Coef: ',R)
+print('Godness of Fit: ', R**2)
+
+
+# Plotting Scatter Plot with the given data to find the best fit
+
+plt.figure(figsize=(12,5))
+plt.scatter(yr, sp, s=300, linewidths=1, edgecolor='Blue')
+
+plt.title('How year affects selling price')
+plt.xlabel('Year of purchase', fontsize=15)
+plt.ylabel('Selling Price', fontsize=15)
+plt.plot(x, B0+B1*x, c='r', linewidth=5, alpha=0.5, solid_capstyle='round')
+plt.scatter(x=yr.mean(), y=sp.mean(), marker='*', s=10**2.5, c='r')
+
+
+# Plotting Bar Graph of year of experience against salaries
+plt.figure(figsize=(12,5))
+plt.bar(yr,sp, width=0.3, color='orange')
+
+plt.title('How year affects selling price')
+plt.xlabel('Year of purchase', fontsize=15)
+plt.ylabel('Selling Price', fontsize=15)
+
+

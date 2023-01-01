@@ -1,0 +1,15 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+irs=pd.read_csv('Iris.csv')
+print(irs.describe())
+irs.columns=['SepalLengthCm', 'SepalWidthCm', 'petal_len', 'petal_wid', 'class']
+irs.dropna(how="all", inplace=True) # remove any empty lines
+print()
+print("Mean: ",irs['SepalWidthCm'].mean()) #mode(),median()
+print("Mode: ",irs['SepalWidthCm'].mode())
+print("Median: ",irs['SepalWidthCm'].median())
+print("Covariance: ",irs['SepalWidthCm'].cov(irs['SepalLengthCm']))
+print("Standard Deviation: ",irs['SepalWidthCm'].std())

@@ -1,0 +1,44 @@
+# Decision Tree
+
+# importing libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn import tree
+from sklearn.preprocessing import LabelEncoder
+
+
+#reading the csv file and storing as a dataframe into disease variable
+disease = pd.read_csv('Disease.csv')
+
+#printing first five records of the dataframe
+disease.head()
+
+#creating object of lable encoder to convert string values of columns into numbers
+le = LabelEncoder()
+disease['Alergy'] = le.fit_transform(disease['Alergy'])
+disease['Fever'] = le.fit_transform(disease['Fever'])
+disease['Cough'] = le.fit_transform(disease['Cough'])
+disease['Cold'] = le.fit_transform(disease['Cold'])
+disease['Headache'] = le.fit_transform(disease['Headache'])
+disease['Disease'] = le.fit_transform(disease['Disease']) 
+
+#splitting feature columns and target columns
+feature_cols = ['Alergy','Fever','Cough','Cold','Headache']
+X = disease[feature_cols]
+y = disease.Disease
+
+#splitting the data into training and testing set
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.3, random_state=3)
+
+#fitting the tree 
+clf = tree.DecisionTreeClassifier()
+clf.fit(X_train, y_train)
+
+#predicting the values of X_test using the above fitted decision tree model
+y_pred = clf.predict(X_test)
+
+#plotting tree
+tree.plot_tree(clf)
+
+from sklearn.metrics import accuracy_score
+print('Accuracy Score: ',accuracy_score(y_test,y_pred)*100,"%")

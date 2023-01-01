@@ -1,0 +1,40 @@
+# Kaggle
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+# from google.colab import files
+# import io
+# uploaded=files.upload()
+# irs=pd.read_csv(io.BytesIO(uploaded['Iris.csv']))
+
+from sklearn import datasets
+import io
+iris = datasets.load_iris()
+irs=pd.read_csv('Iris.csv')
+irs=pd.DataFrame(iris.data)
+
+irs.columns=['SepalLengthCm', 'SepalWidthCm', 'petal_len', 'petal_wid']
+irs.dropna(how="all", inplace=True) # remove any empty lines
+print()
+
+irs.plot(kind='scatter',x='SepalLengthCm',y='SepalWidthCm')
+plt.show()
+plt.scatter(irs['SepalLengthCm'],irs['SepalWidthCm'])
+plt.xlabel('SepalLengthCm')
+plt.ylabel('SepalWidthCm')
+plt.title('SepalLengthCm vs SepalWidthCm' )
+plt.show()
+plt.bar(irs['SepalLengthCm'],irs['SepalWidthCm'])
+plt.xlabel('SepalLengthCm')
+plt.ylabel('SepalWidthCm')
+plt.title('SepalLengthCm vs SepalWidthCm' )
+plt.show()
+irs.plot.box()
+irs.hist()
+sns.set_style("whitegrid")
+sns.FacetGrid(irs,hue="Species",height=4).map(plt.scatter,"SepalLengthCm",
+"SepalWidthCm").add_legend()
+plt.show()
+
