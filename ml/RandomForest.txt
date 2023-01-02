@@ -74,3 +74,62 @@ plt.legend()
 plt.show()
 
 
+
+''' ----------------------------- '''
+
+import pandas as pd
+from sklearn import datasets
+iris=datasets.load_iris()
+print(iris.target_names)
+print(iris.feature_names)
+
+
+print(iris.data[0:5])
+print(iris.target)
+data=pd.DataFrame({'sepal length':iris.data[:,0],
+                    'sepal width':iris.data[:,1],
+                    'petal length':iris.data[:,2],
+                    'petal width':iris.data[:,3],
+                    'species':iris.target})
+print(data.head())
+
+from sklearn import tree
+from sklearn.model_selection import train_test_split
+x=data[['sepal length','sepal width','petal length','petal width']]
+y=data['species']
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+
+from sklearn.ensemble import RandomForestClassifier
+clf=RandomForestClassifier(n_estimators=100)
+clf.fit(x_train,y_train)
+y_pred=clf.predict(x_test)  
+
+from sklearn import metrics
+print(f"Accuracy : {round(metrics.accuracy_score(y_test,y_pred)*100,2)}%")
+
+clf.predict([[3,5,4,2]])
+
+f_imp=clf.feature_importances_
+print(f_imp)
+col_names=x_train.columns
+
+import matplotlib.pylab as plt
+import seaborn as sns
+%matplotlib inline
+sns.barplot(x=col_names,y=f_imp)
+plt.xlabel('Feature Importance Score')
+plt.ylabel('Feature')
+plt.title('Visualizing Important Features')
+plt.legend()
+plt.show()
+
+X=data[['petal length','petal width','sepal length']]
+Y=data['species']
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+
+
+clf2=RandomForestClassifier(n_estimators=100)
+clf2.fit(x_train,y_train)
+y_pred=clf.predict(x_test)
+print(f"Accuracy : {round(metrics.accuracy_score(y_test,y_pred)*100,2)}%")
+
