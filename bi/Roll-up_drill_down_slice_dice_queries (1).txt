@@ -1,0 +1,72 @@
+-- Creating Sales Table
+
+DROP TABLE IF EXISTS sales;
+CREATE TABLE sales (
+    brand VARCHAR NOT NULL,
+    segment VARCHAR NOT NULL,
+    quantity INT NOT NULL,
+    PRIMARY KEY (brand, segment)
+);
+
+
+-- Inserting values into Sales Table
+
+INSERT INTO sales (brand, segment, quantity)
+VALUES
+    ('ABC', 'Premium', 100),
+    ('ABC', 'Basic', 200),
+    ('XYZ', 'Premium', 100),
+    ('XYZ', 'Basic', 300);
+
+
+-- Viewing all data
+
+select * from sales;
+
+
+-- Roll up
+
+SELECT
+    brand,
+    segment,
+    SUM (quantity)
+FROM
+    sales
+GROUP BY
+    ROLLUP (brand, segment)
+ORDER BY
+    brand,
+    segment;
+
+
+-- slice
+
+SELECT
+    *
+FROM
+    sales
+WHERE
+	segment = 'Basic';
+
+
+-- Dice
+
+SELECT
+    *
+FROM
+    sales
+WHERE
+	segment = 'Basic' AND quantity > 250;
+
+-- Drill down
+
+SELECT * FROM sales WHERE region = 'North America';
+
+SELECT * FROM sales WHERE region = 'North America' AND country = 'United States';
+
+SELECT * FROM sales WHERE region = 'North America' AND country = 'United States' AND city = 'New York';
+
+-- This example starts with all sales data for the region "North America", 
+-- and then drills down to sales data for the country "United States", 
+-- and finally drills down to sales data for the city "New York". 
+-- You can use similar queries to drill down into data for other regions, countries, and cities.

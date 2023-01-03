@@ -1,0 +1,38 @@
+1) SQL Query to illustrate the basic functionality of CUBE.
+SELECT COUNT(DISTINCT employeeid), departmentid, city
+FROM Employee1
+GROUP BY
+CUBE(departmentid,city);
+-- In the above example, we have tried to find the count of employees along with each department and city.
+
+
+/* 2) Find the number of distinct employees in each department 
+grouped by their salaries earning a salary between 12000 and 13000./
+SELECT COUNT(DISTINCT employeeid), departmentid, salary
+FROM Employee1
+WHERE salary BETWEEN '12000' AND '13000'
+GROUP BY
+CUBE(departmentid,salary);
+-- The above example illustrates the use of the WHERE clause in the CUBE query.
+
+
+
+-- 3) Summarize the salaries of employees along with each department and city and salary.
+SELECT sum(salary),departmentid, city
+FROM employee1
+GROUP BY
+CUBE(departmentid,city,salary);
+
+
+
+-- 4) Summarize the salaries of employees from Mumbai and Thane along with each 
+-- department(with department name in the resulting set) ordered by salaries and 
+-- departmentname.
+SELECT sum(e.salary),d.departmentname, city
+FROM employees as e INNER JOIN department as d
+ON e.departmentid = d.departmentid
+WHERE e.city = 'Mumbai' OR e.city = 'Thane'
+GROUP BY
+CUBE(d.departmentname,e.city)
+HAVING SUM(e.salary) < '60000'
+ORDER BY sum(e.salary)DESC ,d.departmentname ASC;
